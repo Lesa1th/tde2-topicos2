@@ -1,80 +1,52 @@
 package com.example.users.service;
 
 import com.example.users.model.Product;
+import com.example.users.model.User;
+import com.example.users.repository.ProductRepository;
+import com.example.users.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
 
-    private final List<Product> productList;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    public ProductService() {
-        productList = new ArrayList<>();
-
-        Product product1 = new Product(1, "Arroz");
-        Product product2 = new Product(2, "Algodão");
-        Product product3 = new Product(3, "Batata");
-        Product product4 = new Product(4, "Cenoura");
-
-        productList.addAll(Arrays.asList(product1, product2, product3, product4));
+    public ProductService(ProductRepository productRepository, UserRepository userRepository) {
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
-    public Optional<Product> getProductById(Integer id) {
-        Optional<Product> optional = Optional.empty();
-
-        for(Product product: productList) {
-            if(id == product.getId()) {
-                optional = Optional.of(product);
-                return optional;
-            }
-        }
-
-        return optional;
+    public Product addProduct(Product product) {
+        return productRepository.save(product);
     }
 
-    public Optional<List<Product>> getAllProducts() {
-        Optional<List<Product>> optional = Optional.empty();
-
-        optional = Optional.of(productList);
-        return optional;
-
+    public Product getProductById(int id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
     }
 
-
-
-    public Optional<Product> createProduct(String name) {
-        Optional <Product> optional = Optional.empty();
-
-        int id = (productList.getLast()).getId() + 1;
-        Product newProduct = new Product(id, name);
-        productList.add(newProduct);
-
-        optional = Optional.of(newProduct);
-
-        return optional;
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 
-    public Optional<Product> editProduct(Product product) {
-        Optional <Product> optional = Optional.empty();
-
-        int index=0;
-        for(Product currentProduct: productList) {
-            if(product.getId() == currentProduct.getId()) {
-                optional = Optional.of(product);
-                productList.set(index, product);
-                return optional;
-            }
-            index++;
-        }
-        return optional;
+    @Transactional
+    public void deleteProductById(int id) {
+        productRepository.deleteById(id);
     }
 
-    public void deleteProduct(int id) {
-        productList.removeIf(product -> (product.getId() == id));
+    @Transactional
+    public Product addProductToUser(int userId, Product product) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + userId));
+        Product product1 = new Product(product.getId(), product.getName(), product.getRelease_date());
+        product1.setUser(user);
+
+
+        return productRepository.save(product1);
     }
 }
