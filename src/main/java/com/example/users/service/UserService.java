@@ -1,6 +1,8 @@
 package com.example.users.service;
 
 import com.example.users.model.User;
+import com.example.users.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,8 +13,15 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final List<User> userList;
+    //private final List<User> userList;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    public List<User> list() {
+        return userRepository.findAll();
+    }
+/*
     public UserService() {
         userList = new ArrayList<>();
 
@@ -76,5 +85,5 @@ public class UserService {
 
     public void deleteUser(int id) {
         userList.removeIf(user -> (user.getId() == id));
-    }
+    }*/
 }

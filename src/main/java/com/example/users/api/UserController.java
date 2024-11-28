@@ -19,7 +19,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user")
+    @GetMapping("/allUsers")
+    public List<User> getAllUsers() {
+        return userService.list();
+    }
+
+    /*@GetMapping("/user")
     public User getUser(@RequestParam Integer id) {
         Optional<User> user = userService.getUserById(id);
 
@@ -56,6 +61,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@RequestParam int id) {
         userService.deleteUser(id);
-    }
+    }*/
 
 }
