@@ -52,7 +52,7 @@ public class UserService {
 
     @Transactional
     public User updateUser(int userId, String name, int age, String email) {
-        // Find the existing user by ID
+
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
